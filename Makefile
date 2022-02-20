@@ -7,8 +7,8 @@ all: $(NAME).pdf
 
 # If you have good Emacs and Org-mode installed by default, delete "-l ~/.emacs.d/init.el"
 %.tex: %.org
-	emacs -batch -l ~/.emacs.d/init.el $^  --funcall org-babel-tangle
-	emacs -batch -l ~/.emacs.d/init.el --eval "(setq enable-local-eval t)" --eval "(setq enable-local-variables t)" \
+	emacs -batch -l /home/jthancoc/Downloads/emacs-27.2/init.el $^  --funcall org-babel-tangle
+	emacs -batch -l /home/jthancoc/Downloads/emacs-27.2/init.el --eval "(setq enable-local-eval t)" --eval "(setq enable-local-variables t)" \
 	--eval "(setq org-export-babel-evaluate t)" $^  --funcall org-latex-export-to-latex
 
 %.pdf: %.tex
