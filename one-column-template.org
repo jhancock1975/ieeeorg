@@ -1,0 +1,177 @@
+# -*- coding: utf-8 -*-
+# -*- mode: org -*-
+
+#+TITLE: one column template
+#+AUTHOR: John Thomas Hancock III
+
+#+STARTUP: overview indent
+#+LANGUAGE: pt-br
+#+OPTIONS: H:3 creator:nil timestamp:nil skip:nil toc:nil num:t ^:nil ~:~
+#+OPTIONS: author:nil title:nil date:nil
+#+TAGS: noexport(n) deprecated(d) ignore(i)
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+#+LATEX_CLASS: IEEEtran
+#+LATEX_CLASS_OPTIONS: [conference,letter,12pt,final,onecolumn]
+#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: \usepackage[T1]{fontenc}
+#+LATEX_HEADER: \usepackage{float}
+#+LATEX_HEADER: \usepackage{booktabs}
+
+# You need at least Org 9 and Emacs 24 to make this work.
+# If you do, just type make (thanks Luka Stanisic for this).
+
+* IEEETran configuration for org export + ignore tag (Start Here)  :noexport:
+
+#+begin_src emacs-lisp :results output :session :exports both
+(add-to-list 'load-path ".")
+(require 'ox-extra)
+(ox-extras-activate '(ignore-headlines))
+(add-to-list 'org-latex-classes
+             '("IEEEtran"
+               "\\documentclass{IEEEtran}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+end_src
+
+#+RESULTS:
+
+* *The Paper*                                                       :ignore:
+** Latex configurations                                             :ignore:
+** Frontpage                                                        :ignore:
+#+BEGIN_EXPORT latex
+\makeatletter
+\let\orgtitle\@title
+\makeatother
+
+\title{\orgtitle}
+
+\author{
+\IEEEauthorblockN{
+   John T. Hancock III\IEEEauthorrefmark{1},
+   Taghi M. Khoshgoftaar \IEEEauthorrefmark{1}}
+
+\IEEEauthorblockA{\IEEEauthorrefmark{1}
+College of Engineering and Computer Science, Florida Atlantic University, USA}
+}
+#+END_EXPORT
+
+#+LaTeX: \maketitle
+
+** Abstract                                                         :ignore:
+
+#+LaTeX: \begin{abstract}
+
+Put the abstract here.
+
+#+LaTeX: \end{abstract}
+
+This is a report on lessons learned when working with 2019 Medicare Big data
+** Introduction
+
+This is a report on lessons learned when working with 2019 Medicare Big data
+
+example citation [[cite:orgmode]] 
+
+example ref to another section Section [[#sec.context]] presents the background.
+** Abbreviations
+#+INCLUDE: "../medicare_initial_classification/abbrevs.tex" export latex
+
+** Background and Experimental Context
+:PROPERTIES:
+:CUSTOM_ID: sec.context
+:END:
+LightGBM performs poorly with default hyperparameters; however, we
+found the setting the ~is_unbalance~ hyperparameter to "True", or
+another larger collection of hyperparameters (suggested on this web
+page[fn:https://www.kaggle.com/pranav84/lightgbm-fixing-unbalanced-data-lb-0-9680])
+improves performance.
+
+Random Forest and Extreme Gradient Boosting have no limit on Tree
+depth, that makes training times very long for large datasets.
+Setting the maximum tree depth aids in speeding training time.
+
+XGBoost and CatBoost have a default maximum tree depth of 6.  For
+working with aggregated Medicare data, increasing the maximum depth
+yields better performance.
+
+A better strategy for working with large datasets is to work with
+samples to find good values for hyperparameter settings and then do
+experiments with the entire dataset. In Section [[#sec.observations]] we
+discuss observations on results.
+
+** Observations
+:PROPERTIES:
+:custom_id: sec.observations
+:END:
+
+
+Classifiers with default parameters do better on non-aggregated data.
+
+Classifiers with modified hyperparameters do better than classifiers
+with default hyperparameters on aggregated data.
+
+Bagging and single tree methods with default hyperparameters do better
+than Boosting methods with default hyperparameters.
+
+F1 scores are low due to threshold value chosen for classification.
+The confusion matrices we checked for Part B LightGBM show everything
+is classified in the negative class.  Also AUPRC scores are low for
+Part B LightGBM (classifier LGB-M, dataset B).  Since AUC scores are
+strong, and AUPRC scores are not strong, we conclude false negative
+rates are high.
+
+** Conclusion
+** References                                                        :ignore:
+
+# See next section to understand how refs.bib file is created.
+
+[[bibliographystyle:IEEEtran]]
+[[bibliography:refs.bib]]
+
+* Emacs setup                                                      :noexport:
+# Local Variables:
+# eval: (add-to-list 'load-path ".")
+# eval: (require 'ox-extra)
+# eval: (ox-extras-activate '(ignore-headlines))
+# eval: (require 'org-ref)
+# eval: (require 'doi-utils)
+# eval: (setq org-latex-pdf-process (list "latexmk -pdf %f"))
+# eval: (add-to-list 'org-export-before-processing-hook (lambda (be) (org-babel-tangle)))
+# End:
+* Bib file is here                                                 :noexport:
+
+Tangle this file with C-c C-v t
+
+#+begin_src bibtex :tangle refs.bib
+@article{orgmode,
+  author =	"Eric Schulte and Dan Davison and Thomas Dye and Carsten Dominik",
+  title =	"A Multi-Language Computing Environment for Literate Programming and Reproducible Research",
+  journal =	"J. of Stat. Soft.",
+  volume =	"46",
+  number =	"3",
+  day =  	"25",
+  year = 	"2012",
+  CODEN =	"JSSOBK",
+  ISSN = 	"1548-7660",
+  bibdate =	"2011-10-03",
+  accepted =	"2011-10-03",
+  acknowledgement = "",
+  submitted =	"2010-12-22",
+}
+
+@incollection{schnorr2013visualizing,
+  title={Visualizing More Performance Data Than What Fits on Your Screen},
+  author={Schnorr, Lucas M and Legrand, Arnaud},
+  booktitle={Tools for High Performance Computing 2012},
+  pages={149--162},
+  year={2013},
+  publisher={Springer}
+}
+
+
+#+end_src
